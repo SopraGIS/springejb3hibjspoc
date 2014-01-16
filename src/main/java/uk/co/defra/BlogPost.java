@@ -47,6 +47,8 @@ public class BlogPost {
 
     /** Short content of the article. */
     private String shortContent;
+    
+    
 
     /** The article content. */
     @Lob
