@@ -43,12 +43,12 @@ public class BlogPostController {
     /**
      * The Dao to access the database. The SLSB is injected with EJB and with one of the jndi names:
      *
-     * java:global/spring-ejb3-webapp/BlogPostDaoBean!com.github.bpark.BlogPostDaoBean
-     * java:app/spring-ejb3-webapp/BlogPostDaoBean!com.github.bpark.BlogPostDaoBean
-     * java:module/BlogPostDaoBean!com.github.bpark.BlogPostDaoBean
-     * java:global/spring-ejb3-webapp/BlogPostDaoBean
-     * java:app/spring-ejb3-webapp/BlogPostDaoBean
-     * java:module/BlogPostDaoBean
+	 * java:global/spring-ejb3-webapp/BlogPostDaoBean!uk.co.defra.BlogPostDaoBean
+	 * java:app/spring-ejb3-webapp/BlogPostDaoBean!uk.co.defra.BlogPostDaoBean
+	 * java:module/BlogPostDaoBean!uk.co.defra.BlogPostDaoBean
+	 * java:global/spring-ejb3-webapp/BlogPostDaoBean
+	 * java:app/spring-ejb3-webapp/BlogPostDaoBean
+	 * java:module/BlogPostDaoBean
      */
     @EJB(mappedName="java:module/BlogPostDaoBean")
     private BlogPostDaoBean blogPostDao;

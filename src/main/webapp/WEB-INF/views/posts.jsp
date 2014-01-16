@@ -6,6 +6,7 @@
     <div class="hero-unit">
         <h1>blogboard.org</h1>
         <p><fmt:message key="blogboard.description"/></p>
+        <p><fmt:message key="blogboard.description"/></p>
         <p><a class="btn btn-primary btn-large" href="${newUrl}"><fmt:message key="blogboard.new"/></a></p>
     </div>
 
