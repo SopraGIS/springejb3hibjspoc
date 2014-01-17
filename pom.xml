@@ -101,13 +101,51 @@
 							<includes>
 								<include>*Service.wsdl</include>
 							</includes>
+							<defaultOptions> <!-- To enable plugin to generate JAXB classes with full constructors  -->
+                            <extraargs>
+                                <extraarg>-xjc-Xvalue-constructor</extraarg>
+                            </extraargs>
+                        </defaultOptions>
 						</configuration>
 						<goals>
 							<goal>wsdl2java</goal>
 						</goals>
 					</execution>
 				</executions>
+				<!-- To enable plugin to generate JAXB classes with full constructors  -->
+				<dependencies>
+                <dependency>
+                    <groupId>org.jvnet.jaxb2_commons</groupId>
+                    <artifactId>jaxb2-value-constructor</artifactId>
+                    <version>3.0</version>
+                </dependency>
+                <dependency>
+                    <groupId>org.jvnet.jaxb2_commons</groupId>
+                    <artifactId>jaxb2-basics</artifactId>
+                    <version>0.6.2</version>
+                </dependency>
+            </dependencies>
 			</plugin>
+			
+			<plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>build-helper-maven-plugin</artifactId>
+            <version>1.4</version>
+            <executions>
+                <execution>
+                    <id>add-wsdl-source</id>
+                    <phase>process-sources</phase>
+                    <goals>
+                        <goal>add-source</goal>
+                    </goals>
+                    <configuration>
+                        <sources>
+                            <source>${basedir}/target/generated</source>
+                        </sources>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
 		</plugins>
 	</build>
 
