@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://www.defra.co.uk/SampleSoapService/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="SampleSoapService" targetNamespace="http://www.defra.co.uk/SampleSoapService/">
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://www.defra.co.uk/SampleSoapService/">
+      <xsd:element name="getStockQuote">
+        <xsd:complexType>
+          <xsd:sequence>
+          	<xsd:element name="StockQuoteRequest" type="tns:StockQuoteRequestType"></xsd:element>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="getStockQuoteResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+          	<xsd:element name="StockQuoteResponse" type="tns:StockQuoteResponseType"></xsd:element>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+    
+      <xsd:complexType name="StockQuoteRequestType">
+      	<xsd:sequence>
+      		<xsd:element name="ID" type="xsd:string"></xsd:element>
+      		<xsd:element name="CompanyCode" type="xsd:string"></xsd:element>
+      	</xsd:sequence>
+      </xsd:complexType>
+    
+      <xsd:complexType name="StockQuoteResponseType">
+      	<xsd:sequence>
+      		<xsd:element name="ID" type="xsd:string"></xsd:element>
+      		<xsd:element name="CompanyCode" type="xsd:string"></xsd:element>
+      		<xsd:element name="StockValue" type="xsd:double"></xsd:element>
+      	</xsd:sequence>
+      </xsd:complexType>
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="getStockQuoteRequest">
+    <wsdl:part element="tns:getStockQuote" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="getStockQuoteResponse">
+    <wsdl:part element="tns:getStockQuoteResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:portType name="StockQuotePortType">
+    <wsdl:operation name="getStockQuote">
+      <wsdl:input message="tns:getStockQuoteRequest"/>
+      <wsdl:output message="tns:getStockQuoteResponse"/>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="StockQuoteBinding" type="tns:StockQuotePortType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="getStockQuote">
+      <soap:operation soapAction="http://www.defra.co.uk/SampleSoapService/getStockQuote"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="StockCourtService">
+    <wsdl:port binding="tns:StockQuoteBinding" name="StockQuotePort">
+      <soap:address location="http://www.defra.co.uk/StockQuote"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
