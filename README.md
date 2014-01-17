@@ -15,3 +15,9 @@ To build and run the application follow this install instructions:
 
 To redeploy call mvn clean package jboss-as:redpeloy
 To undeploy the application call jboss-as:undeploy
+
+To generate java classes from wsdl run the following command 
+1. mvn clean generate-sources
+2. In the ide ( eclipse or jboss dev studio ) right click on the generated sources folder 
+and select the option "Use as source folder" . This helps the ide to discover the generated
+classes.
