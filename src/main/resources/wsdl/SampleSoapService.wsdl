@@ -57,7 +57,7 @@
       </wsdl:output>
     </wsdl:operation>
   </wsdl:binding>
-  <wsdl:service name="StockCourtService">
+  <wsdl:service name="StockQuoteService">
     <wsdl:port binding="tns:StockQuoteBinding" name="StockQuotePort">
       <soap:address location="http://www.defra.co.uk/StockQuote"/>
     </wsdl:port>
