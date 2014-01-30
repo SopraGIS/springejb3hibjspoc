@@ -19,13 +19,16 @@
 	<name>spring-ejb3-webapp Maven Webapp</name>
 	<url>http://maven.apache.org</url>
 	<properties>
-		<org.springframework.version>3.0.5.RELEASE</org.springframework.version>
+		<org.springframework.version>3.2.5.RELEASE</org.springframework.version>
 		<org.slf4j.version>1.6.1</org.slf4j.version>
 		<jboss-as.deploy.hostname>localhost</jboss-as.deploy.hostname>  <!-- Where to deploy. -->
 		<jboss-as.deploy.user>admin</jboss-as.deploy.user>
-		<jboss-as.deploy.pass>password</jboss-as.deploy.pass>
+		<jboss-as.deploy.pass>password1*</jboss-as.deploy.pass>
 		<plugin.war.warName>${project.build.finalName}</plugin.war.warName>
 		<cxf.version>2.2.3</cxf.version>
+		<mysql.connector.version>5.1.21</mysql.connector.version>
+		<hibernate.version>4.1.3.Final</hibernate.version>
+		<jbpm.version>6.1.0-SNAPSHOT</jbpm.version>
 
 	</properties>
 	<repositories>
@@ -33,12 +36,33 @@
 		<repository>
 			<id>org.jboss.repository.release</id>
 			<name>JBoss Maven Release Repository</name>
-			<url>https://repository.jboss.org/nexus/content/repositories/releases</url>
+			<url>https://repository.jboss.org/nexus/content/groups/public</url>
+			<releases>
+				<enabled>true</enabled>
+				<updatePolicy>never</updatePolicy>
+			</releases>
 			<snapshots>
-				<enabled>false</enabled>
+				<enabled>true</enabled>
+				<updatePolicy>never</updatePolicy>
 			</snapshots>
 		</repository>
 	</repositories>
+	<pluginRepositories>
+		<pluginRepository>
+			<releases>
+				<enabled>true</enabled>
+				<updatePolicy>never</updatePolicy>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>never</updatePolicy>
+			</snapshots>
+
+			<id>jboss-public-repository</id>
+			<name>JBoss Public</name>
+			<url>https://repository.jboss.org/nexus/content/groups/public-jboss/</url>
+		</pluginRepository>
+	</pluginRepositories>
 	<build>
 		<plugins>
 			<plugin>
@@ -61,26 +85,14 @@
 				<artifactId>exec-maven-plugin</artifactId>
 				<version>1.1.1</version>
 				<executions>
-					<execution>
-						<id>check-style</id>
-						<phase>prepare-package</phase>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-						<configuration>
-							<!-- Closure linter compiler needs to be installed on your computer; if you've followed the instructions 
-								from Google, gjslint should be runnable from the command line. -->
-							<executable>gjslint</executable>
-							<workingDirectory>${basedir}</workingDirectory>
-							<arguments>
-								<!-- Set your arguments here -->
-								<argument>--strict</argument>
-								<argument>-r</argument>
-								<!-- Each source file in this directory will be checked. -->
-								<argument>src/main/webapp/resources/js</argument>
-							</arguments>
-						</configuration>
-					</execution>
+					<!-- <execution> <id>check-style</id> <phase>prepare-package</phase> 
+						<goals> <goal>exec</goal> </goals> <configuration> Closure linter compiler 
+						needs to be installed on your computer; if you've followed the instructions 
+						from Google, gjslint should be runnable from the command line. <executable>gjslint</executable> 
+						<workingDirectory>${basedir}</workingDirectory> <arguments> Set your arguments 
+						here <argument>-strict</argument> <argument>-r</argument> Each source file 
+						in this directory will be checked. <argument>src/main/webapp/resources/js</argument> 
+						</arguments> </configuration> </execution> -->
 
 				</executions>
 			</plugin>
@@ -117,69 +129,39 @@
 			</plugin>
 
 			<!-- Apache cxf code generation plugin -->
-			<plugin>
-				<groupId>org.apache.cxf</groupId>
-				<artifactId>cxf-codegen-plugin</artifactId>
-				<version>${cxf.version}</version>
-				<executions>
-					<execution>
-						<id>generate-sources</id>
-						<phase>generate-sources</phase>
-						<configuration>
-							<sourceRoot>${basedir}/target/generated/</sourceRoot>
-							<wsdlRoot>${basedir}/src/main/resources/wsdl</wsdlRoot>
-							<includes>
-								<include>*Service.wsdl</include>
-							</includes>
-							<defaultOptions> <!-- To enable plugin to generate JAXB classes with full constructors -->
-								<extraargs>
-									<extraarg>-xjc-Xvalue-constructor</extraarg>
-								</extraargs>
-							</defaultOptions>
-						</configuration>
-						<goals>
-							<goal>wsdl2java</goal>
-						</goals>
-					</execution>
-				</executions>
-				<!-- To enable plugin to generate JAXB classes with full constructors -->
-				<dependencies>
-					<dependency>
-						<groupId>org.jvnet.jaxb2_commons</groupId>
-						<artifactId>jaxb2-value-constructor</artifactId>
-						<version>3.0</version>
-					</dependency>
-					<dependency>
-						<groupId>org.jvnet.jaxb2_commons</groupId>
-						<artifactId>jaxb2-basics</artifactId>
-						<version>0.6.2</version>
-					</dependency>
-				</dependencies>
-			</plugin>
-
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>build-helper-maven-plugin</artifactId>
-				<version>1.4</version>
-				<executions>
-					<execution>
-						<id>add-wsdl-source</id>
-						<phase>process-sources</phase>
-						<goals>
-							<goal>add-source</goal>
-						</goals>
-						<configuration>
-							<sources>
-								<source>${basedir}/target/generated</source>
-							</sources>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
+			<!-- <plugin> <groupId>org.apache.cxf</groupId> <artifactId>cxf-codegen-plugin</artifactId> 
+				<version>${cxf.version}</version> <executions> <execution> <id>generate-sources</id> 
+				<phase>generate-sources</phase> <configuration> <sourceRoot>${basedir}/target/generated/</sourceRoot> 
+				<wsdlRoot>${basedir}/src/main/resources/wsdl</wsdlRoot> <includes> <include>*Service.wsdl</include> 
+				</includes> <defaultOptions> To enable plugin to generate JAXB classes with 
+				full constructors <extraargs> <extraarg>-xjc-Xvalue-constructor</extraarg> 
+				</extraargs> </defaultOptions> </configuration> <goals> <goal>wsdl2java</goal> 
+				</goals> </execution> </executions> To enable plugin to generate JAXB classes 
+				with full constructors <dependencies> <dependency> <groupId>org.jvnet.jaxb2_commons</groupId> 
+				<artifactId>jaxb2-value-constructor</artifactId> <version>3.0</version> </dependency> 
+				<dependency> <groupId>org.jvnet.jaxb2_commons</groupId> <artifactId>jaxb2-basics</artifactId> 
+				<version>0.6.2</version> </dependency> </dependencies> </plugin> <plugin> 
+				<groupId>org.codehaus.mojo</groupId> <artifactId>build-helper-maven-plugin</artifactId> 
+				<version>1.4</version> <executions> <execution> <id>add-wsdl-source</id> 
+				<phase>process-sources</phase> <goals> <goal>add-source</goal> </goals> <configuration> 
+				<sources> <source>${basedir}/target/generated</source> </sources> </configuration> 
+				</execution> </executions> </plugin> -->
 
 
 		</plugins>
 	</build>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.jbpm</groupId>
+				<artifactId>jbpm-bom</artifactId>
+				<version>${jbpm.version}</version>
+				<scope>import</scope>
+				<type>pom</type>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 
 	<dependencies>
 
@@ -201,7 +183,16 @@
 			<artifactId>spring-webmvc</artifactId>
 			<version>${org.springframework.version}</version>
 		</dependency>
-
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-aspects</artifactId>
+			<version>${org.springframework.version}</version>
+		</dependency>
+		<dependency>
+    <groupId>org.aspectj</groupId>
+    <artifactId>aspectjrt</artifactId>
+    <version>1.6.12</version>
+</dependency>
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-validator</artifactId>
@@ -259,9 +250,52 @@
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-entitymanager</artifactId>
-			<version>4.1.3.Final</version>
+			<version>${hibernate.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-orm</artifactId>
+			<version>${org.springframework.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+			<version>${hibernate.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>${mysql.connector.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.btm</groupId>
+			<artifactId>btm</artifactId>
+			<version>2.1.4</version>
 		</dependency>
 
+		<dependency>
+			<groupId>commons-dbcp</groupId>
+			<artifactId>commons-dbcp</artifactId>
+			<version>1.4</version>
+		</dependency>
+		<dependency>
+			<groupId>javassist</groupId>
+			<artifactId>javassist</artifactId>
+			<version>3.12.1.GA</version>
+		</dependency>
+		<!-- exclude dom4j as it is provided by jboss.Else causes class cast exceptions -->
+		<dependency>
+			<groupId>dom4j</groupId>
+			<artifactId>dom4j</artifactId>
+			<version>1.6.1</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- can compile, but cannot deploy without these seam dependencies -->
+		<!-- <dependency> <groupId>org.jboss.seam.persistence</groupId> <artifactId>seam-persistence</artifactId> 
+			<version>3.1.0.Final</version> </dependency> <dependency> <groupId>org.jboss.seam.transaction</groupId> 
+			<artifactId>seam-transaction</artifactId> <version>3.1.0.Final</version> 
+			</dependency> -->
 		<!-- Web Service runtime -->
 		<dependency>
 			<groupId>org.apache.cxf</groupId>
@@ -274,5 +308,39 @@
 			<version>${cxf.version}</version>
 		</dependency>
 
+
+		<!-- jBPM 6 dependencies -->
+		<dependency>
+			<groupId>org.kie</groupId>
+			<artifactId>kie-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.kie</groupId>
+			<artifactId>kie-spring</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jbpm</groupId>
+			<artifactId>jbpm-audit</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jbpm</groupId>
+			<artifactId>jbpm-bpmn2</artifactId>
+		</dependency>
+		<!-- <dependency> <groupId>org.jbpm</groupId> <artifactId>jbpm-human-task-core</artifactId> 
+			</dependency> <dependency> <groupId>org.jbpm</groupId> <artifactId>jbpm-human-task-audit</artifactId> 
+			</dependency> <dependency> <groupId>org.jbpm</groupId> <artifactId>jbpm-kie-services</artifactId> 
+			</dependency> -->
+		<dependency>
+			<groupId>org.jbpm</groupId>
+			<artifactId>jbpm-shared-services</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jbpm</groupId>
+			<artifactId>jbpm-persistence-jpa</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jbpm</groupId>
+			<artifactId>jbpm-runtime-manager</artifactId>
+		</dependency>
 	</dependencies>
 </project>

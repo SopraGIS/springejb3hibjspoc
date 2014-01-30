@@ -1,0 +1,9 @@
+<jboss-deployment-structure >
+  <deployment>
+      <module-alias name="weldexclude" slot="main"/>
+  
+     <exclude-subsystems>
+        <subsystem name="weld" />
+    </exclude-subsystems>
+  </deployment>
+</jboss-deployment-structure>
