@@ -37,15 +37,12 @@ import org.kie.api.runtime.process.ProcessInstance;
 import org.kie.internal.runtime.manager.context.EmptyContext;
 
 @Stateless
-//@Interceptors(SpringBeanAutowiringInterceptor.class)
 public class ProcessBean implements ProcessLocal{
 
     /** The EntityManager. */
     @PersistenceContext(unitName = "com.sample.rewards")
     private EntityManager entityManager;
     
-//    @Autowired
-//    private RuntimeEnvironmentFactoryBean  environmentFactoryBean;
     @Inject
     private RewardsApplicationScopedProducer applicationScopedProducer;  
     
@@ -55,14 +52,8 @@ public class ProcessBean implements ProcessLocal{
     
     @PostConstruct
     public void configure() {
-        // use toString to make sure CDI initializes the bean
-        // this makes sure that RuntimeManager is started asap,
-        // otherwise after server restart complete task won't move process forward 
-        //singletonManager.toString();
-    	System.out.println("Post construct called");
-    	System.out.println((applicationScopedProducer==null)?"applicationScopedProducer is null": "applicationScopedProducer is not null");
-    	if(applicationScopedProducer != null )singletonManager = applicationScopedProducer.getJBPMRuntimeManager();
-    		System.out.println((singletonManager == null)? "singleton is null ":singletonManager.toString());
+    	
+    	singletonManager = applicationScopedProducer.getJBPMRuntimeManager();
     		
     }
 @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
